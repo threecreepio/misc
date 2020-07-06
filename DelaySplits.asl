@@ -1,12 +1,10 @@
-// Pause splits using a comparison split
+// Automatically pause splits
 /*
 
 To use this, first add it to your LiveSplit layout as a "Scriptable Auto Splitter".
-Then add a comparison split to your split file named "DELAY".
+Then add the text (pause 1.5s) to one or more of your split names, you can write any time specified in seconds.
 
-To add a delay to a specific split, just write in how long the delay should be in the comparison row for that split.
-
-Make sure you use "Game Time" instead of "Real Time" in LiveSplit as otherwise it will not add the pause.
+Make sure you use "Game Time" instead of "Real Time" in LiveSplit otherwise it will not add the pause.
 
 Enjoy!
 /threecreepio
@@ -39,10 +37,12 @@ isLoading
 	else if (splitIndex < timer.CurrentSplitIndex)
 	{
 		vars.target = null;
-		var hasDelay = timer.CurrentSplit.Comparisons.ContainsKey("DELAY");
-		if (hasDelay)
+		var match = System.Text.RegularExpressions.Regex.Match(timer.CurrentSplit.Name, @"\(pause (\d+\.?\d*)s\)");
+		if (match.Success)
 		{
-			vars.target = DateTime.Now + (timer.CurrentSplit.Comparisons["DELAY"]).GameTime;
+			print(match.Groups[1].ToString());
+			var group = TimeSpan.FromSeconds(double.Parse(match.Groups[1].ToString(), System.Globalization.CultureInfo.InvariantCulture));
+			vars.target = DateTime.Now + group;
 			return true;
 		}
 	}
