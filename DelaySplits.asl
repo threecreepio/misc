@@ -1,4 +1,4 @@
-// Pause LiveSplit using a comparison split
+// Pause splits using a comparison split
 /*
 
 To use this, first add it to your LiveSplit layout as a "Scriptable Auto Splitter".
@@ -24,26 +24,33 @@ isLoading
 
 	if (splitIndex == timer.CurrentSplitIndex)
 	{
-		if (v.ContainsKey("target"))
+		if (v.ContainsKey("target") && vars.target != null)
 		{
 			var remains = vars.target - DateTime.Now;
 			if (remains.TotalMilliseconds > 0)
 			{
 				return true;
 			}
-			v.Remove("target");
+			vars.target = null;
 		}
 	}
 
 	// dont apply the split when undoing splits (not that undoing a split after a delay is a good idea..)
-	if (splitIndex < timer.CurrentSplitIndex)
+	else if (splitIndex < timer.CurrentSplitIndex)
 	{
+		vars.target = null;
 		var hasDelay = timer.CurrentSplit.Comparisons.ContainsKey("DELAY");
 		if (hasDelay)
 		{
 			vars.target = DateTime.Now + (timer.CurrentSplit.Comparisons["DELAY"]).GameTime;
 			return true;
 		}
+	}
+
+	// remove target if we undo a split
+	else
+	{
+		vars.target = null;
 	}
 
 	return false;
