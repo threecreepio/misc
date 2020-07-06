@@ -40,7 +40,6 @@ isLoading
 		var match = System.Text.RegularExpressions.Regex.Match(timer.CurrentSplit.Name, @"\(pause (\d+\.?\d*)s\)");
 		if (match.Success)
 		{
-			print(match.Groups[1].ToString());
 			var group = TimeSpan.FromSeconds(double.Parse(match.Groups[1].ToString(), System.Globalization.CultureInfo.InvariantCulture));
 			vars.target = DateTime.Now + group;
 			return true;
